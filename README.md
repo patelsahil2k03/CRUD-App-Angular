@@ -1,4 +1,4 @@
-# CRUD-App-Angular-Node
+# CRUD-App-Angular
 
  Full-stack Angular + Node + PostgreSQL (CRUD) Application in that:
 •	Tutorial has id, title, description, published status.
