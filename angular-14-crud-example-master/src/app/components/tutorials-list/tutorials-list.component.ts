@@ -9,10 +9,13 @@ import { TutorialService } from 'src/app/services/tutorial.service';
 })
 export class TutorialsListComponent implements OnInit {
 
-  tutorials?: Tutorial[];
+  tutorials: Tutorial[] = [];
   currentTutorial: Tutorial = {};
   currentIndex = -1;
   title = '';
+  isLoading = false;
+  isDeletingAll = false;
+  errorMessage = '';
 
   constructor(private tutorialService: TutorialService) { }
 
@@ -21,13 +24,19 @@ export class TutorialsListComponent implements OnInit {
   }
 
   retrieveTutorials(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
     this.tutorialService.getAll()
       .subscribe({
         next: (data) => {
           this.tutorials = data;
-          console.log(data);
+          this.isLoading = false;
         },
-        error: (e) => console.error(e)
+        error: () => {
+          this.errorMessage = 'Unable to load tutorials. Check backend server and try again.';
+          this.tutorials = [];
+          this.isLoading = false;
+        }
       });
   }
 
@@ -43,27 +52,35 @@ export class TutorialsListComponent implements OnInit {
   }
 
   removeAllTutorials(): void {
+    this.isDeletingAll = true;
+    this.errorMessage = '';
     this.tutorialService.deleteAll()
       .subscribe({
-        next: (res) => {
-          console.log(res);
+        next: () => {
           this.refreshList();
+          this.isDeletingAll = false;
         },
-        error: (e) => console.error(e)
+        error: () => {
+          this.errorMessage = 'Unable to remove tutorials right now.';
+          this.isDeletingAll = false;
+        }
       });
   }
 
   searchTitle(): void {
     this.currentTutorial = {};
     this.currentIndex = -1;
+    this.errorMessage = '';
 
-    this.tutorialService.findByTitle(this.title)
+    this.tutorialService.findByTitle(this.title.trim())
       .subscribe({
         next: (data) => {
           this.tutorials = data;
-          console.log(data);
         },
-        error: (e) => console.error(e)
+        error: () => {
+          this.errorMessage = 'Search failed. Please retry.';
+          this.tutorials = [];
+        }
       });
   }
 

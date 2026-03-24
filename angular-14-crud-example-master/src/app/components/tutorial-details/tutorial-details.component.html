@@ -61,6 +61,7 @@
     <button
       class="badge badge-primary mr-2"
       *ngIf="currentTutorial.published"
+      [disabled]="isSaving || isDeleting"
       (click)="updatePublished(false)"
     >
       UnPublish
@@ -68,23 +69,26 @@
     <button
       *ngIf="!currentTutorial.published"
       class="badge badge-primary mr-2"
+      [disabled]="isSaving || isDeleting"
       (click)="updatePublished(true)"
     >
       Publish
     </button>
 
-    <button class="badge badge-danger mr-2" (click)="deleteTutorial()">
-      Delete
+    <button class="badge badge-danger mr-2" [disabled]="isSaving || isDeleting" (click)="deleteTutorial()">
+      {{ isDeleting ? "Deleting..." : "Delete" }}
     </button>
 
     <button
       type="submit"
       class="badge badge-success mb-2"
+      [disabled]="isSaving || isDeleting"
       (click)="updateTutorial()"
     >
-      Update
+      {{ isSaving ? "Saving..." : "Update" }}
     </button>
     <p>{{ message }}</p>
+    <p class="text-danger">{{ errorMessage }}</p>
   </div>
 
   <div *ngIf="!currentTutorial.id">

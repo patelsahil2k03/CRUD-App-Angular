@@ -19,6 +19,11 @@
   </div>
   <div class="col-md-6">
     <h4>Tutorials List</h4>
+    <p class="text-muted" *ngIf="isLoading">Loading tutorials...</p>
+    <p class="text-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p class="text-muted" *ngIf="!isLoading && !errorMessage && tutorials.length === 0">
+      No tutorials found.
+    </p>
     <ul class="list-group">
       <li
         class="list-group-item"
@@ -30,8 +35,8 @@
       </li>
     </ul>
 
-    <button class="m-3 btn btn-sm btn-danger" (click)="removeAllTutorials()">
-      Remove All
+    <button class="m-3 btn btn-sm btn-danger" (click)="removeAllTutorials()" [disabled]="isDeletingAll || tutorials.length === 0">
+      {{ isDeletingAll ? "Removing..." : "Remove All" }}
     </button>
   </div>
   <div class="col-md-6">

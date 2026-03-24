@@ -20,16 +20,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'angular-14-crud-example'`, () => {
+  it(`should expose app name`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('angular-14-crud-example');
+    expect(app.appName).toEqual('Angular CRUD Tutorials');
   });
 
-  it('should render title', () => {
+  it('should render navbar title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('angular-14-crud-example app is running!');
+    expect(compiled.querySelector('.navbar-brand')?.textContent).toContain('Angular CRUD Tutorials');
   });
 });

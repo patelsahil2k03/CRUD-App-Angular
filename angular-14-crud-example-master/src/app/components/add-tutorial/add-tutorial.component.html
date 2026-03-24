@@ -24,7 +24,10 @@
         />
       </div>
 
-      <button (click)="saveTutorial()" class="btn btn-success">Submit</button>
+      <button (click)="saveTutorial()" class="btn btn-success" [disabled]="isSubmitting">
+        {{ isSubmitting ? "Submitting..." : "Submit" }}
+      </button>
+      <p class="text-danger mt-2 mb-0" *ngIf="errorMessage">{{ errorMessage }}</p>
     </div>
 
     <div *ngIf="submitted">

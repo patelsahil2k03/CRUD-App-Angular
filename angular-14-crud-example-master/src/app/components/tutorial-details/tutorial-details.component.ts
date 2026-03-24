@@ -19,6 +19,9 @@ export class TutorialDetailsComponent implements OnInit {
   };
   
   message = '';
+  errorMessage = '';
+  isSaving = false;
+  isDeleting = false;
 
   constructor(
     private tutorialService: TutorialService,
@@ -33,17 +36,22 @@ export class TutorialDetailsComponent implements OnInit {
   }
 
   getTutorial(id: string): void {
+    this.errorMessage = '';
     this.tutorialService.get(id)
       .subscribe({
         next: (data) => {
           this.currentTutorial = data;
-          console.log(data);
         },
-        error: (e) => console.error(e)
+        error: () => {
+          this.errorMessage = 'Unable to load tutorial details.';
+        }
       });
   }
 
   updatePublished(status: boolean): void {
+    if (!this.currentTutorial.id) {
+      return;
+    }
     const data = {
       title: this.currentTutorial.title,
       description: this.currentTutorial.description,
@@ -51,39 +59,66 @@ export class TutorialDetailsComponent implements OnInit {
     };
 
     this.message = '';
+    this.errorMessage = '';
+    this.isSaving = true;
 
     this.tutorialService.update(this.currentTutorial.id, data)
       .subscribe({
         next: (res) => {
-          console.log(res);
           this.currentTutorial.published = status;
           this.message = res.message ? res.message : 'The status was updated successfully!';
+          this.isSaving = false;
         },
-        error: (e) => console.error(e)
+        error: () => {
+          this.errorMessage = 'Unable to update status right now.';
+          this.isSaving = false;
+        }
       });
   }
 
   updateTutorial(): void {
-    this.message = '';
+    if (!this.currentTutorial.id) {
+      return;
+    }
+    const title = this.currentTutorial.title?.trim() ?? '';
+    const description = this.currentTutorial.description?.trim() ?? '';
+    if (!title || !description) {
+      this.errorMessage = 'Title and description are required.';
+      return;
+    }
 
-    this.tutorialService.update(this.currentTutorial.id, this.currentTutorial)
+    this.message = '';
+    this.errorMessage = '';
+    this.isSaving = true;
+
+    this.tutorialService.update(this.currentTutorial.id, { ...this.currentTutorial, title, description })
       .subscribe({
         next: (res) => {
-          console.log(res);
           this.message = res.message ? res.message : 'This tutorial was updated successfully!';
+          this.isSaving = false;
         },
-        error: (e) => console.error(e)
+        error: () => {
+          this.errorMessage = 'Unable to update tutorial.';
+          this.isSaving = false;
+        }
       });
   }
 
   deleteTutorial(): void {
+    if (!this.currentTutorial.id) {
+      return;
+    }
+    this.errorMessage = '';
+    this.isDeleting = true;
     this.tutorialService.delete(this.currentTutorial.id)
       .subscribe({
-        next: (res) => {
-          console.log(res);
+        next: () => {
           this.router.navigate(['/tutorials']);
         },
-        error: (e) => console.error(e)
+        error: () => {
+          this.errorMessage = 'Unable to delete tutorial.';
+          this.isDeleting = false;
+        }
       });
   }
 
